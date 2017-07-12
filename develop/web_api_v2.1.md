@@ -362,8 +362,9 @@
         <ul>
             <li><a href="#admin-only-add-organization">Add Organization</a></li>
             <li><a href="#admin-only-add-organization-user">Add Organization User</a></li>
+            <li><a href="#admin-only-get-organization-user-info">Get Organization User Info</a></li>
+            <li><a href="#admin-only-update-organization-user-info">Update Organization User Info</a></li>
             <li><a href="#admin-only-delete-organization-user">Delete Organization User</a></li>
-            <li><a href="#admin-only-modify-organization-user">Modify Organization User</a></li>
         </ul>
     </li>
 </ul>
@@ -6174,6 +6175,84 @@ This api is only supported in pro edition (since 6.0.9).
 * 500 Fail to add user.
 * 500 Internal Server Error
 
+### <a id="admin-only-get-organization-user-info"></a>Get Organization User Info
+
+This api is only supported in pro edition (since 6.1.5).
+
+**GET** https://cloud.seafile.com/api/v2.1/admin/organizations/{org_id}/users/{email}/
+
+**Request parameters**
+
+* org_id
+* email
+
+**Sample request**
+
+    curl -H "Authorization: Token cbd7705c06846425ed5c46ae0313d5b098d24154" -H 'Accept: application/json; indent=4' http://192.168.1.124:8000/api/v2.1/admin/organizations/160/users/1@org.com/
+
+**Sample response**
+
+```
+{
+    "quota_usage": 1,
+    "name": "1-a-org-9",
+    "org_id": 160,
+    "contact_email": "1-org@contact-email.com",
+    "active": true,
+    "quota_total": 34,
+    "email": "1@org.com"
+}
+```
+
+**Errors**
+
+* 400 org_id invalid.
+* 400 User is not member of organization.
+* 404 Organization not found.
+* 404 User not found.
+* 500 Internal Server Error
+
+### <a id="admin-only-update-organization-user-info"></a>Updage Organization User Info
+
+This api is only supported in pro edition (since 6.1.5).
+
+**PUT** https://cloud.seafile.com/api/v2.1/admin/organizations/{org_id}/users/{email}/
+
+**Request parameters**
+
+* org_id
+* email
+* active, `true` or `false`
+* name
+* contact_email
+* quota_total, integer greater than 0, unit is MB.
+
+**Sample request**
+
+    curl -X PUT -d "name=org-user-name&contact_email=org-user@contact.email.com&active=false&quota_total=500" -H "Authorization: Token cbd7705c06846425ed5c46ae0313d5b098d24154" -H 'Accept: application/json; indent=4' http://192.168.1.124:8000/api/v2.1/admin/organizations/160/users/1@org.com/
+
+**Sample response**
+```
+{
+    "quota_usage": 1,
+    "name": "org-user-name",
+    "org_id": 160,
+    "contact_email": "org-user@contact.email.com",
+    "active": false,
+    "quota_total": 500,
+    "email": "1@org.com"
+}
+```
+
+**Errors**
+
+* 400 org_id invalid.
+* 400 active invalid, should be 'true' or 'false'.
+* 400 Failed to set quota.
+* 404 Organization not found.
+* 404 User not found.
+* 500 Internal Server Error
+
 ### <a id="admin-only-delete-organization-user"></a>Delete Organization User
 
 This api is only supported in pro edition (since 6.0.9).
@@ -6201,43 +6280,6 @@ This api is only supported in pro edition (since 6.0.9).
 
 * 400 org_id invalid.
 * 403 Failed to delete: is an organization creator.
-* 404 Organization not found.
-* 404 User not found.
-* 500 Internal Server Error
-
-### <a id="admin-only-modify-organization-user"></a>Modify Organization User
-
-This api is only supported in pro edition (since 6.0.9).
-
-**PUT** https://cloud.seafile.com/api/v2.1/admin/organizations/{org_id}/users/{email}/
-
-**Request parameters**
-
-* org_id
-* email
-* active, `true` or `false`
-
-**Sample request**
-
-    curl -X PUT -d "active=false" -H "Authorization: Token 0eb24ce5db35a31f70171eca2f760f03f59fa09a" -H 'Accept: application/json; indent=4' https://cloud.seafile.com/api/v2.1/admin/organizations/160/users/4@org.com/
-
-**Sample response**
-
-```
-{
-    "active": false,
-    "contact_email": "4@org.com",
-    "org_id": 160,
-    "email": "4@org.com",
-    "name": "4"
-}
-```
-
-**Errors**
-
-* 400 org_id invalid.
-* 400 active invalid.
-* 400 active invalid, should be 'true' or 'false'.
 * 404 Organization not found.
 * 404 User not found.
 * 500 Internal Server Error
